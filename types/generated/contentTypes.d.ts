@@ -362,12 +362,51 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
+export interface ApiChapterChapter extends Schema.CollectionType {
+  collectionName: 'chapters';
+  info: {
+    singularName: 'chapter';
+    pluralName: 'chapters';
+    displayName: 'chapter';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    title: Attribute.String & Attribute.Required;
+    videoUrl: Attribute.String & Attribute.Required;
+    description: Attribute.Text & Attribute.Required;
+    chapter: Attribute.Relation<
+      'api::chapter.chapter',
+      'manyToOne',
+      'api::course.course'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::chapter.chapter',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::chapter.chapter',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiCourseCourse extends Schema.CollectionType {
   collectionName: 'courses';
   info: {
     singularName: 'course';
     pluralName: 'courses';
     displayName: 'course';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -377,6 +416,12 @@ export interface ApiCourseCourse extends Schema.CollectionType {
     description: Attribute.Text & Attribute.Required;
     realease_date: Attribute.Date & Attribute.Required;
     onSale: Attribute.Boolean & Attribute.Required & Attribute.DefaultTo<false>;
+    cover: Attribute.Media & Attribute.Required;
+    courses: Attribute.Relation<
+      'api::course.course',
+      'oneToMany',
+      'api::chapter.chapter'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -720,6 +765,7 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
+      'api::chapter.chapter': ApiChapterChapter;
       'api::course.course': ApiCourseCourse;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
